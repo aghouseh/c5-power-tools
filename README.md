@@ -1,4 +1,16 @@
 c5-power-tools
 ==============
+A GreaseMonkey user script toolbox of power user shortcuts for Concrete5. 
 
-A GreaseMonkey user script with a few shortcuts for Concrete5
+Current Shortcuts
+=================
+- Ctrl-E: Toggles edit mode for any page
+- Ctrl-P: Edit properties on the current page
+
+Other Enhancements
+==================
+After using the Intelligent Search to find some pages throughout your site, if you Command-click the link, it will automatically clear the Search dropdown (in addition to the default action of opening the link in a new window) and blur the form field. 
+
+Supports
+========
+Currently only tested on OSX with Firefox. nyeah nyeah.
