@@ -7,6 +7,51 @@
 if (typeof jQuery === 'function') {
 
 	/**
+	 * KeyCapture Object
+	 */
+	var KeyCapture = (function($){
+		
+		var Map = {};
+		namespace = (typeof namespace !== 'undefined') ? namespace : 'KeyCapture';
+
+		/**
+		 * Private Methods
+		 */
+		function _pressedKey (event) { Map[event.keyCode] = true; }
+		function _releasedKey (event) { delete Map[event.keyCode]; }
+		function _addListeners() {
+			$(document.body).on('keydown.' + namespace, _pressedKey);
+			$(document.body).on('keyup.' + namespace, _releasedKey);
+		}
+		function _removeListeners() {
+			$(document.body).off('keydown.' + namespace);
+			$(document.body).off('keyup.' + namespace);
+		}
+
+		/**
+		 * Public Method for exposure
+		 */
+		var Cap = {};
+		Cap.isDown = function (keyCode) { return (keyCode in Map); };
+		Cap.isUp = function (keyCode) { return (!isDown()); };
+		Cap.ignore = function() { _removeListeners; };
+		Cap.watch = function() { _addListeners; };
+		Cap.getMap = function() { return Map; };
+
+		function _init() {
+			_addListeners();
+		}
+
+		$(function(){
+			_init();
+		});
+
+		return Cap;
+
+	})(jQuery);
+
+
+	/**
 	 * http://www.openjs.com/scripts/events/keyboard_shortcuts/
 	 * Version : 2.01.B
 	 * By Binny V A
@@ -262,56 +307,24 @@ if (typeof jQuery === 'function') {
 	shortcut.add("Ctrl+S", function(){
 
 		$('#ccm-nav-intelligent-search').click().focus();
-		
+
 	});
 
-	var KeyCapture = (function($){
-		
-		var Map = {};
-		namespace = (typeof namespace !== 'undefined') ? namespace : 'KeyCapture';
-
-		/**
-		 * Private Methods
-		 */
-		function _pressedKey (event) { Map[event.keyCode] = true; }
-		function _releasedKey (event) { delete Map[event.keyCode]; }
-		function _addListeners() {
-			$(document.body).on('keydown.' + namespace, _pressedKey);
-			$(document.body).on('keyup.' + namespace, _releasedKey);
-		}
-		function _removeListeners() {
-			$(document.body).off('keydown.' + namespace);
-			$(document.body).off('keyup.' + namespace);
-		}
-
-		var Cap = {};
-		Cap.isDown = function (keyCode) { return (keyCode in Map); };
-		Cap.isUp = function (keyCode) { return (!isDown()); };
-		Cap.ignore = function() { _removeListeners; };
-		Cap.watch = function() { _addListeners; };
-		Cap.getMap = function() { return Map; };
-
-		function _init() {
-			_addListeners();
-		}
-
-		$(function(){
-			_init();
-		});
-
-		return Cap;
-
-	})(jQuery);
-
 	/**
-	 * DOM Ready
+	 * DOM Ready Bindings
 	 */
 	$(function() {
-		$(document.body).on('click', '#ccm-intelligent-search-results a', function (event) {
-			if (KeyCapture.isDown(224)) {
-				$('#ccm-nav-intelligent-search').val('').change().focus().click().blur();
-			}
-		});
+		$(document.body)
+
+			/**
+			 * This will check for a "open link in new window" trigger via a held "ctrl" key click on
+			 * an intelligent search result. It just clears the fieid and dropdown out on click.
+			 */
+			.on('click', '#ccm-intelligent-search-results a', function (event) {
+				if (KeyCapture.isDown(224)) {
+					$('#ccm-nav-intelligent-search').val('').change().focus().click().blur();
+				}
+			});
 	});
 
 
