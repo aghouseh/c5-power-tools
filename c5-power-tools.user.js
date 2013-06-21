@@ -258,12 +258,10 @@ if (typeof jQuery === 'function') {
 		
 	});
 
-	// toggle edit mode
-	shortcut.add("Ctrl+X", function() {
+	// quick jump to the intelligent search, regardless of what has focus
+	shortcut.add("Ctrl+S", function(){
 
-		if ($('.ui-dialog.ui-resizable').length) {
-
-		}
+		$('#ccm-nav-intelligent-search').click().focus();
 		
 	});
 
