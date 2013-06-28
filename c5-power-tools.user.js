@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name			 Concrete5 Power Tools
-// @description	A toolbox of power user shortcuts for Concrete5 administrators
-// @include		 *
+// @version			 1.1
+// @description	     A toolbox of power user shortcuts for Concrete5 administrators
+// @include		     *
 // ==/UserScript==
  
 if (typeof jQuery === 'function') {
@@ -324,8 +325,23 @@ if (typeof jQuery === 'function') {
 				if (KeyCapture.isDown(224)) {
 					$('#ccm-nav-intelligent-search').val('').change().focus().click().blur();
 				}
-			});
-	});
+			})
 
+			/**
+			 * This is supporting the double click event below
+			 * Adds the area ID to the .data() of the highlighter
+			 */
+			.on('hover', '.ccm-block', function () {
+				$('#ccm-highlighter').data('block-id', this.id.replace('b', ''));
+			})
+
+			/**
+			 * Fires the Edit dialog on double-click of a block in Edit Mode
+			 */
+			.on('dblclick', '#ccm-highlighter', function (event) {
+				$('a#menuEdit' + $(this).data('block-id')).click();
+			});
+
+	});
 
 }
