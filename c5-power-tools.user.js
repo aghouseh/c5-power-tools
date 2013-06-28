@@ -2,6 +2,7 @@
 // @name			 Concrete5 Power Tools
 // @version			 1.1
 // @description	     A toolbox of power user shortcuts for Concrete5 administrators
+// @updateURL        https://github.com/aghouseh/c5-power-tools/raw/master/c5-power-tools.user.js
 // @include		     *
 // ==/UserScript==
  
