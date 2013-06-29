@@ -19,4 +19,4 @@ Double clicking a block in edit mode will now open up the "Edit" dialog for that
 
 Supports
 ========
-Currently only tested on OSX with Firefox. nyeah nyeah.
+Thoroughly tested on OSX with Firefox. Confirmed that it works on current versions of Chrome, but requires Tampermonkey to do so.
