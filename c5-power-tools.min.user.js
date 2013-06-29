@@ -1,88 +1,10 @@
 // ==UserScript==
 // @name			 Concrete5 Power Tools
-// @version			 1.1
+// @version			 1.2.0.1
 // @description	     A toolbox of power user shortcuts for Concrete5 administrators
-// @updateURL        https://github.com/aghouseh/c5-power-tools/raw/master/c5-power-tools.min.user.js
+// @updateURL        https://github.com/aghouseh/c5-power-tools/raw/master/c5-power-tools.user.js
 // @include		     *
+// @match http://*/*
 // ==/UserScript==
  
-if (typeof jQuery === 'function') {
-
-	/**
-	 * Minified KeyCapture & shortcut objects
-	 */
-	var KeyCapture=function(e){function n(e){t[e.keyCode]=true}function r(e){delete t[e.keyCode]}function i(){e(document.body).on("keydown."+namespace,n);e(document.body).on("keyup."+namespace,r)}function s(){e(document.body).off("keydown."+namespace);e(document.body).off("keyup."+namespace)}function u(){i()}var t={};namespace=typeof namespace!=="undefined"?namespace:"KeyCapture";var o={};o.isDown=function(e){return e in t};o.isUp=function(e){return!isDown()};o.ignore=function(){s};o.watch=function(){i};o.getMap=function(){return t};e(function(){u()});return o}(jQuery);shortcut={all_shortcuts:{},add:function(e,t,n){var r={type:"keydown",propagate:false,disable_in_input:false,target:document,keycode:false};if(!n)n=r;else{for(var i in r){if(typeof n[i]=="undefined")n[i]=r[i]}}var s=n.target;if(typeof n.target=="string")s=document.getElementById(n.target);var o=this;e=e.toLowerCase();var u=function(r){r=r||window.event;if(n["disable_in_input"]){var i;if(r.target)i=r.target;else if(r.srcElement)i=r.srcElement;if(i.nodeType==3)i=i.parentNode;if(i.tagName=="INPUT"||i.tagName=="TEXTAREA")return}if(r.keyCode)code=r.keyCode;else if(r.which)code=r.which;var s=String.fromCharCode(code).toLowerCase();if(code==188)s=",";if(code==190)s=".";var o=e.split("+");var u=0;var a={"`":"~",1:"!",2:"@",3:"#",4:"$",5:"%",6:"^",7:"&",8:"*",9:"(",0:")","-":"_","=":"+",";":":","'":'"',",":"<",".":">","/":"?","\\":"|"};var f={esc:27,escape:27,tab:9,space:32,"return":13,enter:13,backspace:8,scrolllock:145,scroll_lock:145,scroll:145,capslock:20,caps_lock:20,caps:20,numlock:144,num_lock:144,num:144,pause:19,"break":19,insert:45,home:36,"delete":46,end:35,pageup:33,page_up:33,pu:33,pagedown:34,page_down:34,pd:34,left:37,up:38,right:39,down:40,f1:112,f2:113,f3:114,f4:115,f5:116,f6:117,f7:118,f8:119,f9:120,f10:121,f11:122,f12:123};var l={shift:{wanted:false,pressed:false},ctrl:{wanted:false,pressed:false},alt:{wanted:false,pressed:false},meta:{wanted:false,pressed:false}};if(r.ctrlKey)l.ctrl.pressed=true;if(r.shiftKey)l.shift.pressed=true;if(r.altKey)l.alt.pressed=true;if(r.metaKey)l.meta.pressed=true;for(var c=0;k=o[c],c<o.length;c++){if(k=="ctrl"||k=="control"){u++;l.ctrl.wanted=true}else if(k=="shift"){u++;l.shift.wanted=true}else if(k=="alt"){u++;l.alt.wanted=true}else if(k=="meta"){u++;l.meta.wanted=true}else if(k.length>1){if(f[k]==code)u++}else if(n["keycode"]){if(n["keycode"]==code)u++}else{if(s==k)u++;else{if(a[s]&&r.shiftKey){s=a[s];if(s==k)u++}}}}if(u==o.length&&l.ctrl.pressed==l.ctrl.wanted&&l.shift.pressed==l.shift.wanted&&l.alt.pressed==l.alt.wanted&&l.meta.pressed==l.meta.wanted){t(r);if(!n["propagate"]){r.cancelBubble=true;r.returnValue=false;if(r.stopPropagation){r.stopPropagation();r.preventDefault()}return false}}};this.all_shortcuts[e]={callback:u,target:s,event:n["type"]};if(s.addEventListener)s.addEventListener(n["type"],u,false);else if(s.attachEvent)s.attachEvent("on"+n["type"],u);else s["on"+n["type"]]=u},remove:function(e){e=e.toLowerCase();var t=this.all_shortcuts[e];delete this.all_shortcuts[e];if(!t)return;var n=t["event"];var r=t["target"];var i=t["callback"];if(r.detachEvent)r.detachEvent("on"+n,i);else if(r.removeEventListener)r.removeEventListener(n,i,false);else r["on"+n]=false}}
-
-	/**
-	 * Shortcuts & Bindings - Edit below here
-	 */
-	
-	// toggle edit mode
-	shortcut.add("Ctrl+E", function() {
-
-		if ($('#ccm-nav-check-out, #ccm-check-in-publish').length) {
-			if (CCM_EDIT_MODE) {
-				$("#ccm-approve-field").val('APPROVE');
-				$('#ccm-check-in').submit();
-			} else {
-				var newloc = $('#ccm-nav-edit').attr('href');
-				window.location.href = newloc;
-			}
-		}
-		
-	});
-
-	// toggle edit mode
-	shortcut.add("Ctrl+W", function() {
-
-		if ($('#ccm-toolbar-nav-properties').length) {
-			if ($('#ccmMetadataForm').length) {
-				$('#ccmMetadataForm').submit();
-			} else {
-				$('#ccm-toolbar-nav-properties').click();
-			}
-		}
-		
-	});
-
-	// quick jump to the intelligent search, regardless of what has focus
-	shortcut.add("Ctrl+S", function(){
-
-		$('#ccm-nav-intelligent-search').click().focus();
-
-	});
-
-	/**
-	 * DOM Ready Bindings
-	 */
-	$(function() {
-		$(document.body)
-
-			/**
-			 * This will check for a "open link in new window" trigger via a held "ctrl" key click on
-			 * an intelligent search result. It just clears the fieid and dropdown out on click.
-			 */
-			.on('click', '#ccm-intelligent-search-results a', function (event) {
-				if (KeyCapture.isDown(224)) {
-					$('#ccm-nav-intelligent-search').val('').change().focus().click().blur();
-				}
-			})
-
-			/**
-			 * This is supporting the double click event below
-			 * Adds the area ID to the .data() of the highlighter
-			 */
-			.on('hover', '.ccm-block', function () {
-				$('#ccm-highlighter').data('block-id', this.id.replace('b', ''));
-			})
-
-			/**
-			 * Fires the Edit dialog on double-click of a block in Edit Mode
-			 */
-			.on('dblclick', '#ccm-highlighter', function (event) {
-				$('a#menuEdit' + $(this).data('block-id')).click();
-			});
-
-	});
-
-}
+ if(typeof CCM_BASE_URL!=="undefined"){var KeyCapture=(function(g){var b={};namespace=(typeof namespace!=="undefined")?namespace:"KeyCapture";function f(i){b[i.keyCode]=true}function h(i){delete b[i.keyCode]}function d(){g(document.body).on("keydown."+namespace,f);g(document.body).on("keyup."+namespace,h)}function c(){g(document.body).off("keydown."+namespace);g(document.body).off("keyup."+namespace)}var a={isDown:function(i){return(i in b)},isUp:function(i){return(!isDown(i))},ignore:function(){c()},watch:function(){d()},getMap:function(){return b}};function e(){d()}g(function(){e()});return a})(jQuery);(function(){function K(j,h,l){j.addEventListener?j.addEventListener(h,l,!1):j.attachEvent("on"+h,l)}function b(j){if("keypress"==j.type){var h=String.fromCharCode(j.which);j.shiftKey||(h=h.toLowerCase());return h}return S[j.which]?S[j.which]:a[j.which]?a[j.which]:String.fromCharCode(j.which).toLowerCase()}function H(j){j=j||{};var h=!1,l;for(l in P){j[l]?h=!0:P[l]=0}h||(k=!1)}function N(x,w,u,v,t,s){var r,n,q=[],p=u.type;if(!R[x]){return[]}"keyup"==p&&i(x)&&(w=[x]);for(r=0;r<R[x].length;++r){if(n=R[x][r],v||!(n.seq&&P[n.seq]!=n.level)){if(p==n.action&&("keypress"==p&&!u.metaKey&&!u.ctrlKey||w.sort().join(",")===n.modifiers.sort().join(","))){var l=v&&n.seq==v&&n.level==s;(!v&&n.combo==t||l)&&R[x].splice(r,1);q.push(n)}}}return q}function e(j){var h=[];j.shiftKey&&h.push("shift");j.altKey&&h.push("alt");j.ctrlKey&&h.push("ctrl");j.metaKey&&h.push("meta");return h}function f(j,h,l){if(!Q.stopCallback(h,h.target||h.srcElement,l)&&!1===j(h,l)){h.preventDefault&&h.preventDefault(),h.stopPropagation&&h.stopPropagation(),h.returnValue=!1,h.cancelBubble=!0}}function d(j){"number"!==typeof j.which&&(j.which=j.keyCode);var h=b(j);h&&("keyup"==j.type&&c===h?c=!1:Q.handleKey(h,e(j),j))}function i(h){return"shift"==h||"ctrl"==h||"alt"==h||"meta"==h}function L(j,h){var p,q,n,m=[];p="+"===j?["+"]:j.split("+");for(n=0;n<p.length;++n){q=p[n],J[q]&&(q=J[q]),h&&("keypress"!=h&&I[q])&&(q=I[q],m.push("shift")),i(q)&&m.push(q)}p=q;n=h;if(!n){if(!O){O={};for(var l in S){95<l&&112>l||S.hasOwnProperty(l)&&(O[S[l]]=l)}}n=O[p]?"keydown":"keypress"}"keypress"==n&&m.length&&(n="keydown");return{key:q,modifiers:m,action:n}}function o(l,j,r,s,q){M[l+":"+r]=j;l=l.replace(/\s+/g," ");var p=l.split(" ");if(1<p.length){var n=l;l=function(h){return function(){k=h;++P[n];clearTimeout(g);g=setTimeout(H,1000)}};s=function(h){f(j,h,n);"keyup"!==r&&(c=b(h));setTimeout(H,10)};for(q=P[n]=0;q<p.length;++q){var m=q+1===p.length?s:l(r||L(p[q+1]).action);o(p[q],m,r,n,q)}}else{p=L(l,r),R[p.key]=R[p.key]||[],N(p.key,p.modifiers,{type:p.action},s,l,q),R[p.key][s?"unshift":"push"]({callback:j,modifiers:p.modifiers,action:p.action,seq:s,level:q,combo:l})}}for(var S={8:"backspace",9:"tab",13:"enter",16:"shift",17:"ctrl",18:"alt",20:"capslock",27:"esc",32:"space",33:"pageup",34:"pagedown",35:"end",36:"home",37:"left",38:"up",39:"right",40:"down",45:"ins",46:"del",91:"meta",93:"meta",224:"meta"},a={106:"*",107:"+",109:"-",110:".",111:"/",186:";",187:"=",188:",",189:"-",190:".",191:"/",192:"`",219:"[",220:"\\",221:"]",222:"'"},I={"~":"`","!":"1","@":"2","#":"3",$:"4","%":"5","^":"6","&":"7","*":"8","(":"9",")":"0",_:"-","+":"=",":":";",'"':"'","<":",",">":".","?":"/","|":"\\"},J={option:"alt",command:"meta","return":"enter",escape:"esc",mod:/Mac|iPod|iPhone|iPad/.test(navigator.platform)?"meta":"ctrl"},O,R={},M={},P={},g,c=!1,k=!1,T=1;20>T;++T){S[111+T]="f"+T}for(T=0;9>=T;++T){S[T+96]=T}K(document,"keypress",d);K(document,"keydown",d);K(document,"keyup",d);var Q={bind:function(j,h,l){j=j instanceof Array?j:[j];for(var m=0;m<j.length;++m){o(j[m],h,l)}return this},unbind:function(j,h){return Q.bind(j,function(){},h)},trigger:function(j,h){if(M[j+":"+h]){M[j+":"+h]({},j)}return this},reset:function(){R={};M={};return this},stopCallback:function(j,h){return -1<(" "+h.className+" ").indexOf(" mousetrap ")?!1:"INPUT"==h.tagName||"SELECT"==h.tagName||"TEXTAREA"==h.tagName||h.contentEditable&&"true"==h.contentEditable},handleKey:function(j,h,p){h=N(j,h,p);var q,n={},m=0,l=!1;for(q=0;q<h.length;++q){h[q].seq&&(m=Math.max(m,h[q].level))}for(q=0;q<h.length;++q){h[q].seq?h[q].level==m&&(l=!0,n[h[q].seq]=1,f(h[q].callback,p,h[q].combo)):l||f(h[q].callback,p,h[q].combo)}p.type==k&&!i(j)&&H(n)}};window.Mousetrap=Q;"function"===typeof define&&define.amd&&define(Q)})();Mousetrap.bind("ctrl+e",function(){if($("#ccm-nav-check-out, #ccm-check-in-publish").length){if(CCM_EDIT_MODE){$("#ccm-approve-field").val("APPROVE");$("#ccm-check-in").submit()}else{var a=$("#ccm-nav-edit").attr("href");window.location.href=a}}});Mousetrap.bind("ctrl+w",function(){if($("#ccm-toolbar-nav-properties").length){if($("#ccmMetadataForm").length){$("#ccmMetadataForm").submit()}else{$("#ccm-toolbar-nav-properties").click()}}});Mousetrap.bind("ctrl+s",function(){$("#ccm-nav-intelligent-search").click().focus()});$(function(){$(document.body).on("click","#ccm-intelligent-search-results a",function(a){if(KeyCapture.isDown(224)){$("#ccm-nav-intelligent-search").val("").change().focus().click().blur()}}).on("hover",".ccm-block",function(){$("#ccm-highlighter").data("block-id",this.id.replace("b",""))}).on("dblclick","#ccm-highlighter",function(a){$("a#menuEdit"+$(this).data("block-id")).click()})})};
