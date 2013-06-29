@@ -1,12 +1,15 @@
 // ==UserScript==
 // @name			 Concrete5 Power Tools
-// @version			 1.1
+// @version			 1.2
 // @description	     A toolbox of power user shortcuts for Concrete5 administrators
 // @updateURL        https://github.com/aghouseh/c5-power-tools/raw/master/c5-power-tools.user.js
 // @include		     *
+// @match http://*/*
 // ==/UserScript==
  
-if (typeof jQuery === 'function') {
+alert('Fired');
+
+(function($) { if (typeof CCM_BASE_URL !== 'undefined') {
 
 	/**
 	 * KeyCapture Object
@@ -19,13 +22,17 @@ if (typeof jQuery === 'function') {
 		/**
 		 * Private Methods
 		 */
-		function _pressedKey (event) { Map[event.keyCode] = true; }
-		function _releasedKey (event) { delete Map[event.keyCode]; }
-		function _addListeners() {
+		function _pressedKey (event) {
+			Map[event.keyCode] = true;
+		}
+		function _releasedKey (event) {
+			delete Map[event.keyCode];
+		}
+		function _addListeners () {
 			$(document.body).on('keydown.' + namespace, _pressedKey);
 			$(document.body).on('keyup.' + namespace, _releasedKey);
 		}
-		function _removeListeners() {
+		function _removeListeners () {
 			$(document.body).off('keydown.' + namespace);
 			$(document.body).off('keyup.' + namespace);
 		}
@@ -33,12 +40,23 @@ if (typeof jQuery === 'function') {
 		/**
 		 * Public Method for exposure
 		 */
-		var Cap = {};
-		Cap.isDown = function (keyCode) { return (keyCode in Map); };
-		Cap.isUp = function (keyCode) { return (!isDown()); };
-		Cap.ignore = function() { _removeListeners; };
-		Cap.watch = function() { _addListeners; };
-		Cap.getMap = function() { return Map; };
+		var Cap = {
+			isDown: function (keyCode) {
+				return (keyCode in Map);
+			},
+			isUp: function (keyCode) {
+				return (!isDown(keyCode));
+			},
+			ignore: function () {
+				_removeListeners();
+			},
+			watch: function () {
+				_addListeners();
+			},
+			getMap: function () {
+				return Map; 
+			}
+		};
 
 		function _init() {
 			_addListeners();
@@ -345,4 +363,4 @@ if (typeof jQuery === 'function') {
 
 	});
 
-}
+})(jQuery); } // end if CCM_BASE_URL
